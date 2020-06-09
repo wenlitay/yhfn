@@ -6,7 +6,9 @@ exports.getCurrentPrice = function (req, res) {
     getPrice(stockId, function (err, price) {
         if (err)
             res.send(err);
-        res.json(price);
+        res.json({
+            price: price
+        });
     })
 };
 
