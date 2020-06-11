@@ -4,8 +4,14 @@ exports.getCurrentPrice = function (req, res) {
     let stockId = req.params.stockId
 
     getPrice(stockId, function (err, price) {
-        if (err)
-            res.send(err);
+        if (err) {
+            console.log('err --->')
+            console.log(err)
+            return res.status(400).send({
+                error: 'Ticker symbol not found'
+            });
+        }
+
         res.json({
             price: price
         });
