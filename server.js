@@ -1,19 +1,16 @@
-var express = require('express'),
-  app = express(),
-  port = process.env.PORT || 3000,
-  bodyParser = require('body-parser');
+import express from 'express'
+import routes from './api/routes/yfRoutes'
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+const app = express()
 
-var routes = require('./api/routes/yfRoutes'); //importing route
-routes(app); //register the route
+const port = process.env.PORT || 3000
 
-app.listen(port);
+app.use('/', routes)
 
-app.use(function(req, res) {
-  res.status(404).send({url: req.originalUrl + ' not found'})
-});
+app.listen(port, () =>
+  console.log(`Yahoofinance app listening on port ${port}!`)
+)
 
-console.log('API server started on: ' + port);
-
+app.use((req, res) => {
+  res.status(404).send({ url: req.originalUrl + ' not found' })
+})

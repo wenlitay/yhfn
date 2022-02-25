@@ -1,6 +1,10 @@
-module.exports = function(app) {
-  var yfController = require('../controllers/yfController');
+import { Router } from 'express'
+import { getCurrentPrice } from '../controllers/yfController'
 
-  app.route('/price/:stockId')
-    .get(yfController.getCurrentPrice);
-};
+const router = Router()
+
+router.get('/price/:stockId', async (req, res) => {
+  return getCurrentPrice(req, res)
+})
+
+export default router

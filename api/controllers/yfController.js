@@ -1,38 +1,41 @@
-const request = require('request');
+import axios from 'axios'
 
-exports.getCurrentPrice = function (req, res) {
-    let stockId = req.params.stockId
+const getCurrentPrice = async (req, res) => {
+  const stockId = req.params.stockId
 
-    getPrice(stockId, function (err, price) {
-        if (err) {
-            console.log('err --->')
-            console.log(err)
-            return res.status(400).send({
-                error: 'Ticker symbol not found'
-            });
-        }
+  const price = await _getPrice(stockId)
 
-        res.json({
-            price: price
-        });
+  if (price.error) {
+    return res.status(400).send({
+      error: 'Ticker symbol not found',
     })
-};
+  }
 
-const getPrice = function (ticker, callback) {
-    const baseUrl = 'https://finance.yahoo.com/quote/';
-    request(baseUrl + ticker + "/", function (err, res, body) {
+  res.json({
+    price: price,
+  })
+}
 
-        if (err) { callback(err); }
+const _getPrice = async (ticker) => {
+  const baseUrl = 'https://finance.yahoo.com/quote'
 
-        try {
-            var price = parseFloat(body.split(`"${ticker}":{"sourceInterval"`)[1]
-                .split("regularMarketPrice")[1]
-                .split("fmt\":\"")[1]
-                .split("\"")[0]);
+  const response = await axios.get(`${baseUrl}/${ticker}/`)
 
-            callback(null, price);
-        } catch (err) {
-            callback(err)
-        }
-    });
-};
+  try {
+    const price = parseFloat(
+      response.data
+        .split(`"${ticker}":{"sourceInterval"`)[1]
+        .split('regularMarketPrice')[1]
+        .split('fmt":"')[1]
+        .split('"')[0]
+    )
+
+    return price
+  } catch (err) {
+    console.log('error >>> ', err)
+
+    return { error: err }
+  }
+}
+
+export { getCurrentPrice }
