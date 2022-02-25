@@ -1,5 +1,5 @@
 import express from 'express'
-import routes from './api/routes/yfRoutes'
+import routes from './routes/yfRoutes'
 
 const app = express()
 
